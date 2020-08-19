@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "codigoCalidad": "B",
+        "numeroCalidad": "200"
+    },
+    {
+        "id": 2,
+        "codigoCalidad": "B 1/4",
+        "numeroCalidad": "225"
+    },
+    {
+        "id": 3,
+        "codigoCalidad": "B 1/2",
+        "numeroCalidad": "250"
+    },
+    {
+        "id": 4,
+        "codigoCalidad": "B 3/4",
+        "numeroCalidad": "275"
+    },
+    {
+        "id": 5,
+        "codigoCalidad": "C",
+        "numeroCalidad": "300"
+    },
+    {
+        "id": 6,
+        "codigoCalidad": "C 1/4",
+        "numeroCalidad": "325"
+    },
+    {
+        "id": 7,
+        "codigoCalidad": "C 1/2",
+        "numeroCalidad": "350"
+    },
+    {
+        "id": 8,
+        "codigoCalidad": "C 3/4",
+        "numeroCalidad": "375"
+    },
+    {
+        "id": 9,
+        "codigoCalidad": "D",
+        "numeroCalidad": "400"
+    },
+    {
+        "id": 10,
+        "codigoCalidad": "D 1/4",
+        "numeroCalidad": "425"
+    },
+    {
+        "id": 11,
+        "codigoCalidad": "D 1/2",
+        "numeroCalidad": "450"
+    },
+    {
+        "id": 12,
+        "codigoCalidad": "D 3/4",
+        "numeroCalidad": "475"
+    },
+    {
+        "id": 13,
+        "codigoCalidad": "E",
+        "numeroCalidad": "500"
+    },
+    {
+        "id": 14,
+        "codigoCalidad": "E 1/4",
+        "numeroCalidad": "525"
+    },
+    {
+        "id": 15,
+        "codigoCalidad": "E 1/2",
+        "numeroCalidad": "550"
+    },
+    {
+        "id": 16,
+        "codigoCalidad": "E 3/4",
+        "numeroCalidad": "575"
+    },
+    {
+        "id": 13,
+        "codigoCalidad": "F",
+        "numeroCalidad": "600"
+    },
+    {
+        "id": 14,
+        "codigoCalidad": "F 1/4",
+        "numeroCalidad": "625"
+    },
+    {
+        "id": 15,
+        "codigoCalidad": "F 1/2",
+        "numeroCalidad": "650"
+    },
+    {
+        "id": 16,
+        "codigoCalidad": "F 3/4",
+        "numeroCalidad": "675"
+    }
+]

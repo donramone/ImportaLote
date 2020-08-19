@@ -1,0 +1,15 @@
+{
+  "name": "importalotes",
+  "version": "1.0.0",
+  "description": "Guarda la calidad del algodon extraida a través de un Web Service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Luigi Lipreri",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "mysql": "^2.18.1"
+  }
+}
