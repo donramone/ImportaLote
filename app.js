@@ -23,8 +23,7 @@ function guardarFardos(data, lotes) {
         modelo
             .insertFardo(codigoCliente, data.NroLote, fardo['Num'], fardo['Calidad'], fardo['CodCalidad'], new Date())
             .then(() => {
-                actualizarLoteServisoft(transformador.obtenerCalidad(fardo['Calidad']), lotes['Resistencia'], lotes['Longuitud'], lotes['Micronaire'], lotes['Colores'], transformador.obtenerCliente(codigoCliente), fardo['Num'], transformador.obtenerFechaCiclo());
-                console.log("Actualizando servisoft");
+
             })
             .catch(err => {
                 console.log(err);
@@ -36,13 +35,14 @@ function guardarFardos(data, lotes) {
 function actualizarLoteServisoft(calidad, resistencia, heb, micronaire, colores, codCliente, numFardo, ciclo) {
     modelo.actualizarFardo(calidad, resistencia, heb, micronaire, colores, codCliente, numFardo, ciclo)
         .then((r) => {
-            console.log("Se acutalizo servisoft: " + r);
+            console.log("Se acutalizo loteServisoft: ");
         })
         .catch(err => {
             console.log(err);
 
         });
 }
+
 
 async function obtenerLotesPorClienteAPI(cliente, año) {
     const limite = 50;
@@ -60,9 +60,9 @@ async function obtenerLotesPorClienteAPI(cliente, año) {
             const { data } = await axios.post(END_POINT, { "key": "3YEU2OTMAQ", "CodigoCliente": cliente, "Año": año, "Take": limite, "Skip": skip });
             skip = skip + limite;
             guardarLotes(data);
-            console.log("En lotes por cliente despues del llamado a guardar en lotes:");
+            
         }
-
+     
     } catch (ex) {
         console.log(ex.data);
 
@@ -96,14 +96,14 @@ function obtenerTotalLotesDB(cliente) {
         });
 }
 
-async function obtenerTotalLotesAPI(cliente) {
-    const año = "2020";
+async function obtenerTotalLotesAPI(cliente, año) {
+
     const END_POINT = 'https://gestionstock.southmsnet.com.ar/extranet/GetLotesByCliente';
     try {
 
         const { data } = await axios.post(END_POINT, { "key": "3YEU2OTMAQ", "CodigoCliente": cliente, "Año": año, "Take": "5", "Skip": "0" });
 
-        console.log(data.TotalLotes);
+        //console.log(data.TotalLotes);
         return data.TotalLotes;
 
     } catch (ex) {
@@ -112,10 +112,82 @@ async function obtenerTotalLotesAPI(cliente) {
     }
 }
 
-const codigoCliente = 'HYD';
-obtenerLotesPorClienteAPI(codigoCliente, '2020');
+function vaciarTablas(){
+    vaciarTablaFardo()
+    .then(() => {
+        vaciarTablaLotes();
+        })
+    .catch(err => {
+        
+    });
+}
+
+function vaciarTablaFardo(){
+    // modelo.vaciarFardos().then(() => {
+    //     console.log("se vacio fardos");
+    // })
+    // .catch(err => {
+    //     console.log("No se vacio fardos");
+
+    // });
+    return modelo.vaciarFardos();
+}
+
+function vaciarTablaLotes(){
+    // modelo.vaciarLotes().then(() => {
+    //     console.log("se vacio LOTES");
+    // })
+    // .catch(err => {
+    //     console.log("No se vacio LOTES!");
+
+    // });
+    return modelo.vaciarLotes();
+}
+//GOJ - HYD - CRE - ACT
+const codigoCliente = 'GOJ';
+//const año =  new Date();
+var hoy = new Date();
+var año = hoy.getFullYear();
+
+
+vaciarTablas();
+
+
+
+
+
+
+//obtenerTotalLotesDB(codigoCliente);
+//     const lotes = obtenerTotalLotesAPI(codigoCliente, año);
+//     lotes.then((r) => {
+//     console.log(r);
+//    })
+
+
+//obtenerFardosPorLoteAPI(codigoCliente, "1049", null);
+
+// const lotes = obtenerLotesPorClienteAPI(codigoCliente, '2020');
+
+
+// lotes.then((r) => {
+//     console.log("lotes" );
+// })
+// .catch(err => {
+//     console.log("No se pudo traer lotes: " + err);
+
+// });
+
+const clientesPromesas = clientes.map((cliente) => {
+         return obtenerLotesPorClienteAPI(cliente.codigoCliente, año);
+    })
+
+    const clientesResueltos = await Promise.all(clientesPromesas)
+
+//console.log(obtenerLotesPorClienteAPI());
 
 // const clientes = modelo.traerClientesJson();
-// clientes.forEach((cliente) => {
-//     console.log(cliente.codigoCliente);
+//  clientes.forEach((cliente) => {
+//      console.log(cliente.codigoCliente);
+//      obtenerLotesPorClienteAPI(cliente.codigoCliente, año);
+
 // })

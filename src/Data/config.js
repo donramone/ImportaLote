@@ -7,3 +7,10 @@ let conexion = mysql.createConnection({
     database:'Sogico'
   
   });
+
+
+  conexion.connect(function(err) {
+    if (err) throw err;
+});
+
+module.exports = conexion;

@@ -1,13 +1,15 @@
 const mysql = require('mysql');
 const fs = require('fs');
-let conexion = mysql.createConnection({
-  host: '18.212.141.183',
-  user: 'root',
-  password: 'luigi',
-  port: 33060,
-  database: 'Sogico'
+const conexion = require('../Data/config');
+// let conexion = mysql.createConnection({
+//   host: '18.212.141.183',
+//   user: 'root',
+//   password: 'luigi',
+//   port: 33060,
+//   database: 'Sogico'
 
-});
+// });
+//connection.createConnection();
 
 module.exports = {
   insertLote(nombre, calidad, fardos, resistencia, promedio, colores, codMicro, longitud, paquetes, micronaire, año, estado, codEstado, codCliente, fechaCreacion) {
@@ -85,7 +87,7 @@ module.exports = {
   },
   vaciarFardos() {
     return new Promise((resolve, reject) => {
-      conexion.query(`TRUNCATE TABLE Fardos_tmp_copys`,
+      conexion.query(`TRUNCATE TABLE Fardos_tmp`,
         (err, resultados) => {
 
           if (err) reject(err);
@@ -95,7 +97,7 @@ module.exports = {
   },
   vaciarLotes() {
     return new Promise((resolve, reject) => {
-      conexion.query(`TRUNCATE TABLE Lotes_tmp_copy`,
+      conexion.query(`TRUNCATE TABLE Lotes_tmp`,
         (err, resultados) => {
 
           if (err) reject(err);
