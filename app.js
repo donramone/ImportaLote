@@ -137,7 +137,7 @@ async function obtenerLotesPorClienteAPI(cliente, año) {
 
 async function obtenerFardosPorLoteAPI(cliente, nroLote) {
     // aca estoy haciendo un pasamano con itemLote porque lo necesito en guardarFaro, mala practica ver como solucionarlo.
-    console.log("En Fardos por lotes");
+    console.log("En Fardos por lotes - CLIENTE: " + cliente);
     const limiteFardo = "60"; // LA API no tiene un limite para el fardo.Igualmente por lote siempre deberia tener 52 Fardos. 
     const año = "2020";
 
@@ -181,20 +181,22 @@ async function obtenerTotalLotesAPI(cliente) {
     }
 }
 
-//  const codigoCliente = 'goj';
+//-- Aca funciona de  a un cliente //
 const año = '2020';
-const clientes = modelo.traerClientesJson();
-let codigoCliente = 'act';
-// obtenerLotesPorClienteAPI(codigoCliente, '2020');
-obtenerLotesPorClienteAPI(codigoCliente, año);
+//let codigoCliente = 'act';
+//obtenerLotesPorClienteAPI(codigoCliente, año);
 
-// async function xxx (clientes){
-//     clientes.map((cliente) => {
-//         // return obtenerLotesPorClienteAPI(cliente.codigoCliente, año);
+
+//-----Aca no puedo recorrer para que me tome los clientes desde el JSON -----
+
+
+const clientes = modelo.traerClientesJson();
+// async function recorrerClientesPromesa (clientes){
+//     clientes.map(async (cliente) => {
 //         codigoCliente = cliente.codigoCliente
-//         console.log(codigoCliente);
-//         return await obtenerLotesPorClienteAPI(codigoCliente, año);
-        
+//         //console.log(codigoCliente);
+//         return  obtenerLotesPorClienteAPI(codigoCliente, año);
+               
 //     })
 // }
 
@@ -207,21 +209,33 @@ obtenerLotesPorClienteAPI(codigoCliente, año);
 //         });
 
 
-// const clientesPromesas = clientes.map((cliente) => {
-//     // return obtenerLotesPorClienteAPI(cliente.codigoCliente, año);
-//     codigoCliente = cliente.codigoCliente
+// const clientesResueltos = await Promise.all(clientesPromesas);
+
+
+
+//  const clientesPromesas = clientes.map(async (cliente) => {
+//      return obtenerLotesPorClienteAPI(cliente.codigoCliente, año);
+//  })
+
+ // clientesResueltos.then(() => {
+//     console.log("El programa finalizo correctamente ");
+// })
+//     .catch(err => {
+//         console.log("no guardo bien los datos " + err);
+// });
+
+/// este codigo solo me funciona con un solo cliente ACT
+//  const clientesPromesas = clientes.map((cliente) => {
+  
+//      codigoCliente = cliente.codigoCliente
 //      return obtenerLotesPorClienteAPI(codigoCliente, año);
     
+//  })
+
+// const clientesResueltos = Promise.all(clientesPromesas);
+// clientesResueltos.then(() => {
+//     console.log("El programa finalizo correctamente ");
 // })
-
-
-
-
-//const clientesResueltos = await Promise.all(clientesPromesas).then
-    //  Promise.all(clientesPromesas).then(() => {
-    //     console.log("El programa finalizo correctamente ");
-    // })
-    //     .catch(err => {
-    //         console.log("no guardo bien los datos " + err);
-    //     });
-
+//     .catch(err => {
+//         console.log("no guardo bien los datos " + err);
+//     });
