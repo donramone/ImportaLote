@@ -1,13 +1,7 @@
 const mysql = require('mysql');
 const fs = require('fs');
-let conexion = mysql.createConnection({
-  host: '18.212.141.183',
-  user: 'root',
-  password: 'luigi',
-  port: 33060,
-  database: 'Sogico'
+const conexion = require('../Data/config');
 
-});
 
 module.exports = {
   insertLote(nombre, calidad, fardos, resistencia, promedio, colores, codMicro, longitud, paquetes, micronaire, año, estado, codEstado, codCliente, fechaCreacion) {
@@ -117,6 +111,18 @@ module.exports = {
   traerClientesJson() {
     try {
       return JSON.parse(fs.readFileSync('./src/data/clientes.json'))
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        console.log('No se encontró el archivo clientes.json!');
+      } else {
+        throw err;
+      }
+    }
+  },
+  async traerClientesJ() {
+    try {
+      //const res = await readFileAsync('./data.json')
+      return await JSON.parse(fs.readFileSync('./src/data/clientes.json'))
     } catch (err) {
       if (err.code === 'ENOENT') {
         console.log('No se encontró el archivo clientes.json!');
