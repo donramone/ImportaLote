@@ -3,6 +3,10 @@ const modelo = require('./src/Modelo/modelo');
 const axios = require('axios');
 const APIKEY = "3YEU2OTMAQ";
 
+let codigoCliente;
+const fecha = new Date();
+const año = fecha.getFullYear();
+
 function guardarLotes(lotes) {
      const lotesPromesas = lotes.LoteDetails.map((lote) => {
         return modelo
@@ -61,9 +65,7 @@ async function obtenerLotesPorClienteAPI(codigoCliente, año) {
 //             const { data: dataConSkip } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteFardo, "Skip": skip, "NroLote": nroLote });
 //             skip = skip + limiteFardo;
 //             await guardarFardos(dataConSkip);
-
 //         }
-   
 //     } catch (ex) {
 //         console.log(ex);
 //     }
@@ -71,8 +73,6 @@ async function obtenerLotesPorClienteAPI(codigoCliente, año) {
 
 async function obtenerFardosPorLoteAPI(codigoCliente, nroLote) {
     const limiteFardo = "100"; 
-    const año = "2020";
-
     const END_POINT = ' https://gestionstock.southmsnet.com.ar/extranet/GetFardosByLote';
     try {
         const { data } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteFardo, "Skip": "0", "NroLote": nroLote });
@@ -87,9 +87,6 @@ async function vaciarTablas(){
     await modelo.vaciarLotes();
     await modelo.vaciarFardos();
 }
-
-let codigoCliente;
-const año = '2020';
 
 async function correrIndividual(){
     await vaciarTablas();
