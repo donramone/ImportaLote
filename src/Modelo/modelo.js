@@ -79,7 +79,7 @@ module.exports = {
   },
   vaciarFardos() {
     return new Promise((resolve, reject) => {
-      conexion.query(`TRUNCATE TABLE Fardos_tmp_copys`,
+      conexion.query(`TRUNCATE TABLE Fardos_tmp`,
         (err, resultados) => {
 
           if (err) reject(err);
@@ -89,7 +89,7 @@ module.exports = {
   },
   vaciarLotes() {
     return new Promise((resolve, reject) => {
-      conexion.query(`TRUNCATE TABLE Lotes_tmp_copy`,
+      conexion.query(`TRUNCATE TABLE Lotes_tmp`,
         (err, resultados) => {
 
           if (err) reject(err);
@@ -111,18 +111,6 @@ module.exports = {
   traerClientesJson() {
     try {
       return JSON.parse(fs.readFileSync('./src/data/clientes.json'))
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        console.log('No se encontró el archivo clientes.json!');
-      } else {
-        throw err;
-      }
-    }
-  },
-  async traerClientesJ() {
-    try {
-      //const res = await readFileAsync('./data.json')
-      return await JSON.parse(fs.readFileSync('./src/data/clientes.json'))
     } catch (err) {
       if (err.code === 'ENOENT') {
         console.log('No se encontró el archivo clientes.json!');
