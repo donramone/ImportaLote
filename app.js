@@ -47,25 +47,24 @@ async function obtenerLotesPorClienteAPI(codigoCliente, año) {
         console.log(ex);
     }
 }
+
 // async function obtenerFardosPorLoteAPI(codigoCliente, nroLote) {
-//     let con = 1;
+//     // Esta funcion es por si puede haber mas de 52 Fardos por lotes
 //     const limiteFardo = "100"; 
 //     const año = "2020";
 //     let skip = 0;
 //     const END_POINT = ' https://gestionstock.southmsnet.com.ar/extranet/GetFardosByLote';
 //     try {
-//         const { data } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": 50, "Skip": 0, "NroLote": nroLote });
+//         const { data } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteFardo, "Skip": "0", "NroLote": nroLote });
 //         const totales = data.Total;
-//         console.log("Total Lotes Cliente HYD NRO LOTE " + nroLote  + "TOTALES " + totales)
 //         for (let i = 0; i < totales; i = i + 100) {
-//             const { data: dataConSkip } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteFardo, "Skip": skip });
+//             const { data: dataConSkip } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteFardo, "Skip": skip, "NroLote": nroLote });
 //             skip = skip + limiteFardo;
 //             await guardarFardos(dataConSkip);
 
 //         }
    
 //     } catch (ex) {
-//         console.log("Error en obtenerFardosPorLoteAPI");
 //         console.log(ex);
 //     }
 // }
@@ -82,6 +81,8 @@ async function obtenerFardosPorLoteAPI(codigoCliente, nroLote) {
         console.log(ex);
     }
 }
+
+
 async function vaciarTablas(){
     await modelo.vaciarLotes();
     await modelo.vaciarFardos();
