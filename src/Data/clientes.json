@@ -6,30 +6,20 @@
     },
     {
         "id": 2,
-        "codigoCliente": "ALF",
-        "nc": "000136"
-    },
-    {
-        "id": 3,
         "codigoCliente": "GOJ",
         "nc": "000178"
     },
     {
-        "id": 4,
+        "id": 3,
         "codigoCliente": "CRE",
         "nc": "000182"
     },
     {
-        "id": 5,
+        "id": 4,
         "codigoCliente": "ACT",
         "nc": "040444"
     }
-    ,
-    {
-        "id": 5,
-        "codigoCliente": "ACP",
-        "nc": "020896"
-    }
+    
 ]
 
 

@@ -1,193 +1,120 @@
-const transformador = require('./src/transformador');
+
 const modelo = require('./src/Modelo/modelo');
 const axios = require('axios');
+const APIKEY = "3YEU2OTMAQ";
 
 function guardarLotes(lotes) {
-    console.log("En guardar lotes");
-    lotes.LoteDetails.forEach((lote) => {
-        modelo
+     const lotesPromesas = lotes.LoteDetails.map((lote) => {
+        return modelo
             .insertLote(lote['NroLote'], lote['Calidad'], lote['Fardos'], lote['Resistencia'], lote['Promedio'], lote['Colores'], lote['CodMicro'], lote['Longuitud'], lote['Paquetes'], lote['Micronaire'], lote['Año'], lote['Estado'], lote['CodEstado'], codigoCliente, new Date())
             .then(() => {
-                //CodigoCliente, NroLote,Numfardo, Calidad,CodCalidad,fechaCreacion
-                obtenerFardosPorLoteAPI(codigoCliente, lote['NroLote'], lote);
+                return obtenerFardosPorLoteAPI(codigoCliente, lote['NroLote']);
             })
             .catch(err => {
                 console.log(err);
             });
-           
     });
+    return Promise.all(lotesPromesas)
 }
 
-function guardarFardos(data, lotes) {
-    data.Fardos.forEach((fardo) => {
-        modelo
+function guardarFardos(data) {
+    const fardosPromesa = data.Fardos.map((fardo) => {
+        return modelo
             .insertFardo(codigoCliente, data.NroLote, fardo['Num'], fardo['Calidad'], fardo['CodCalidad'], new Date())
             .then(() => {
-
+                console.log("Guardando Nro Lote: " + data.NroLote + " Nro Fardo: " + fardo['Num']  + " Cliente: " + codigoCliente );
             })
             .catch(err => {
                 console.log(err);
             });
-
     });
+    return Promise.all(fardosPromesa);
 }
 
-function actualizarLoteServisoft(calidad, resistencia, heb, micronaire, colores, codCliente, numFardo, ciclo) {
-    modelo.actualizarFardo(calidad, resistencia, heb, micronaire, colores, codCliente, numFardo, ciclo)
-        .then((r) => {
-            console.log("Se acutalizo loteServisoft: ");
-        })
-        .catch(err => {
-            console.log(err);
-
-        });
-}
-
-
-async function obtenerLotesPorClienteAPI(cliente, año) {
-    const limite = 50;
+async function obtenerLotesPorClienteAPI(codigoCliente, año) {
+    const limiteLote = 50;
     let skip = 0;
-    console.log("En lotes por cliente");
     const END_POINT = 'https://gestionstock.southmsnet.com.ar/extranet/GetLotesByCliente';
     try {
-
-        // Tene en cuenta que no importa el seteo del limite el TOTAL siempre da lo mismo
-        const { data } = await axios.post(END_POINT, { "key": "3YEU2OTMAQ", "CodigoCliente": cliente, "Año": año, "Take": limite, "Skip": "0" });
-        //Controlar que traiga datos
+        const { data } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteLote, "Skip": "0" });
         const totales = data.TotalLotes;
-
         for (let i = 0; i < totales; i = i + 50) {
-            const { data } = await axios.post(END_POINT, { "key": "3YEU2OTMAQ", "CodigoCliente": cliente, "Año": año, "Take": limite, "Skip": skip });
-            skip = skip + limite;
-            guardarLotes(data);
-            
+            const { data: dataConSkip } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteLote, "Skip": skip });
+            skip = skip + limiteLote;
+            await guardarLotes(dataConSkip);
         }
-     
     } catch (ex) {
-        console.log(ex.data);
-
+        console.log(ex);
     }
 }
+// async function obtenerFardosPorLoteAPI(codigoCliente, nroLote) {
+//     let con = 1;
+//     const limiteFardo = "100"; 
+//     const año = "2020";
+//     let skip = 0;
+//     const END_POINT = ' https://gestionstock.southmsnet.com.ar/extranet/GetFardosByLote';
+//     try {
+//         const { data } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": 50, "Skip": 0, "NroLote": nroLote });
+//         const totales = data.Total;
+//         console.log("Total Lotes Cliente HYD NRO LOTE " + nroLote  + "TOTALES " + totales)
+//         for (let i = 0; i < totales; i = i + 100) {
+//             const { data: dataConSkip } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteFardo, "Skip": skip });
+//             skip = skip + limiteFardo;
+//             await guardarFardos(dataConSkip);
 
-async function obtenerFardosPorLoteAPI(cliente, nroLote, itemLote) {
-    // aca estoy haciendo un pasamano con itemLote porque lo necesito en guardarFaro, mala practica ver como solucionarlo.
-    console.log("En Fardos por lotes");
-    const limiteFardo = "60"; // LA API no tiene un limite para el fardo.Igualmente por lote siempre deberia tener 52 Fardos. 
+//         }
+   
+//     } catch (ex) {
+//         console.log("Error en obtenerFardosPorLoteAPI");
+//         console.log(ex);
+//     }
+// }
+
+async function obtenerFardosPorLoteAPI(codigoCliente, nroLote) {
+    const limiteFardo = "100"; 
     const año = "2020";
 
     const END_POINT = ' https://gestionstock.southmsnet.com.ar/extranet/GetFardosByLote';
     try {
-        const { data } = await axios.post(END_POINT, { "key": "3YEU2OTMAQ", "CodigoCliente": cliente, "Año": año, "Take": limiteFardo, "Skip": "0", "NroLote": nroLote });
-        guardarFardos(data, itemLote);
+        const { data } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteFardo, "Skip": "0", "NroLote": nroLote });
+        await guardarFardos(data);
     } catch (ex) {
-        console.log(ex.data);
+        console.log(ex);
     }
 }
-
-function obtenerTotalLotesDB(cliente) {
-    //Agregar año
-    modelo.traerLotesPorCliente(cliente)
-        .then((r) => {
-            console.log(r.total);
-        })
-        .catch(err => {
-            console.log("No se pudo traer totales: " + err.sqlMessage);
-
-        });
+async function vaciarTablas(){
+    await modelo.vaciarLotes();
+    await modelo.vaciarFardos();
 }
 
-async function obtenerTotalLotesAPI(cliente, año) {
+let codigoCliente;
+const año = '2020';
 
-    const END_POINT = 'https://gestionstock.southmsnet.com.ar/extranet/GetLotesByCliente';
+async function correrIndividual(){
+    await vaciarTablas();
+    codigoCliente = 'cre';
     try {
-
-        const { data } = await axios.post(END_POINT, { "key": "3YEU2OTMAQ", "CodigoCliente": cliente, "Año": año, "Take": "5", "Skip": "0" });
-
-        //console.log(data.TotalLotes);
-        return data.TotalLotes;
-
-    } catch (ex) {
-        console.log(ex.data);
-
+       await obtenerLotesPorClienteAPI(codigoCliente, año);
+    } catch (e) {
+        console.log("No se ejecuto correctamente " + e);
+        return;
     }
+    console.log("Finalizo la ejecucion del programa");
 }
 
-function vaciarTablas(){
-    vaciarTablaFardo()
-    .then(() => {
-        vaciarTablaLotes();
-        })
-    .catch(err => {
+async function correr() {
+    vaciarTablas();
+    const clientes = modelo.traerClientesJson();
+    try {
+        for (let i = 0; i < clientes.length; i++) {
+            codigoCliente = clientes[i].codigoCliente
+            await obtenerLotesPorClienteAPI(codigoCliente, año);
+        }
+    } catch (e) {
+        console.log("No se ejecuto correctamente " + e);
         
-    });
+    }
+    console.log("Finalizo la ejecucion del programa");
 }
-
-function vaciarTablaFardo(){
-    // modelo.vaciarFardos().then(() => {
-    //     console.log("se vacio fardos");
-    // })
-    // .catch(err => {
-    //     console.log("No se vacio fardos");
-
-    // });
-    return modelo.vaciarFardos();
-}
-
-function vaciarTablaLotes(){
-    // modelo.vaciarLotes().then(() => {
-    //     console.log("se vacio LOTES");
-    // })
-    // .catch(err => {
-    //     console.log("No se vacio LOTES!");
-
-    // });
-    return modelo.vaciarLotes();
-}
-//GOJ - HYD - CRE - ACT
-const codigoCliente = 'GOJ';
-//const año =  new Date();
-var hoy = new Date();
-var año = hoy.getFullYear();
-
-
-vaciarTablas();
-
-
-
-
-
-
-//obtenerTotalLotesDB(codigoCliente);
-//     const lotes = obtenerTotalLotesAPI(codigoCliente, año);
-//     lotes.then((r) => {
-//     console.log(r);
-//    })
-
-
-//obtenerFardosPorLoteAPI(codigoCliente, "1049", null);
-
-// const lotes = obtenerLotesPorClienteAPI(codigoCliente, '2020');
-
-
-// lotes.then((r) => {
-//     console.log("lotes" );
-// })
-// .catch(err => {
-//     console.log("No se pudo traer lotes: " + err);
-
-// });
-
-const clientesPromesas = clientes.map((cliente) => {
-         return obtenerLotesPorClienteAPI(cliente.codigoCliente, año);
-    })
-
-    const clientesResueltos = await Promise.all(clientesPromesas)
-
-//console.log(obtenerLotesPorClienteAPI());
-
-// const clientes = modelo.traerClientesJson();
-//  clientes.forEach((cliente) => {
-//      console.log(cliente.codigoCliente);
-//      obtenerLotesPorClienteAPI(cliente.codigoCliente, año);
-
-// })
+//correrIndividual();
+correr();
