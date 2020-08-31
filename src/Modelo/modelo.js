@@ -2,7 +2,6 @@ const mysql = require('mysql');
 const fs = require('fs');
 const conexion = require('../Data/config');
 
-
 module.exports = {
   insertLote(nombre, calidad, fardos, resistencia, promedio, colores, codMicro, longitud, paquetes, micronaire, año, estado, codEstado, codCliente, fechaCreacion) {
     return new Promise((resolve, reject) => {
