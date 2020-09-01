@@ -4,12 +4,13 @@
   "description": "Guarda la calidad del algodon extraida a través de un Web Service",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/app.js"
   },
   "author": "Luigi Lipreri",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
     "mysql": "^2.18.1"
   }
 }
