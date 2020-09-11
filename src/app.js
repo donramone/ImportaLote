@@ -1,4 +1,4 @@
-require('dotenv').config();
+//require('dotenv').config();
 const procesarCliente = require('./procesarCliente');
 const {vaciarTablas} = require('./Servicio/servicio');
 const modelo = require('./Modelo/cliente.js');
@@ -13,6 +13,7 @@ async function correr(modo) {
     // }
 
     const clientes = modelo.traerClientesJson();
+    console.log("traer clientes");
     try {
         for (let i = 0; i < clientes.length; i++) {
             console.log(clientes[i].codigoCliente);

@@ -3,7 +3,7 @@ let conexion = mysql.createConnection({
   host:process.env.DB_HOST,
     user:'root',
     password:'luigi',
-    port: 33060,
+    port: 3306,
     database:'Sogico'
   });
 
