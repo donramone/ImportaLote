@@ -15,17 +15,19 @@ async function correr(modo) {
  
     try {
         await procesarCliente("CRE", 2020); 
+        
         //servicio.getLotes();
-        for (let i = 0; i < clientes.length; i++) {
+        //for (let i = 0; i < clientes.length; i++) {
             //console.log(clientes[i].codigoCliente);
             //await procesarCliente(clientes[i].codigoCliente, 2020); //si el año tiene que ser el actual usá el método Date()
-        }
+        //}
     } catch (e) {
         console.log("No se ejecuto correctamente " + e);
         
     }
-    console.log("Finalizo la ejecucion del programa");
-    process.exit(1)
+    //Esto se ejecuta antes de que haga el await del try y si tengo process.exit no funciona
+    console.log("Finalizo en app.js");
+    //process.exit(1)
 }
-
-correr(process.env.MODO);
+correr();
+//correr(process.env.MODO);

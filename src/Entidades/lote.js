@@ -1,6 +1,5 @@
 module.exports = class Lote {
     constructor({
-        id,
         nroLote,
         calidad,
         fardos,
@@ -16,7 +15,6 @@ module.exports = class Lote {
         codigoEstado,
         cliente     
     }) {
-        this.id = id;
         this.nroLote = nroLote;
         this.calidad = calidad;
         this.fardos = fardos;

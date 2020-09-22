@@ -2,6 +2,7 @@ const modeloLote = require('../Modelo/lote.js');
 const modeloFardo = require('../Modelo/fardo.js');
 //const api = require('../Api/api.js');
 
+
 async function vaciarTablas(){
    //await modelo.vaciarLotes();
    //await modelo.vaciarFardos();
@@ -31,8 +32,19 @@ async function guardarLotes(lotes) {
     
     });
     return Promise.all(lotesPromesas)
-}
+} 
 
+
+async function guardar(lotes) {
+    
+    const lotesPromesas = lotes.map(async (lote) => {
+        console.log("Insertando lote numero ",lote['nroLote'] )
+         await modeloLote
+        .insertLote(lote['nroLote'], lote['calidad'], lote['fardos'], lote['resistencia'], lote['promedio'], lote['colores'], lote['codMicro'], lote['longitud'], lote['paquetes'], lote['micronaire'], lote['año'], lote['estado'], lote['codigoEstado'], lote['cliente'], new Date())
+        
+    });
+    return Promise.all(lotesPromesas)
+}
 async function guardarFardos(fardos) {
     // SyntaxError: await is only valid in async function
     // No sé si esta bien dejar los dos async.
@@ -46,4 +58,4 @@ async function guardarFardos(fardos) {
     return Promise.all(fardosPromesa);
 } 
 
-module.exports = {vaciarTablas,guardarLotes,guardarFardos,getLotes};
+module.exports = {vaciarTablas,guardarLotes,guardarFardos,getLotes,guardar};
