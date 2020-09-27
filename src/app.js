@@ -2,6 +2,7 @@
 const procesarCliente = require('./procesarCliente');
 const {vaciarTablas} = require('./Servicio/servicio');
 const modelo = require('./Modelo/cliente.js');
+
 async function correr(modo) {
     // await vaciarTablas();
 
@@ -14,7 +15,7 @@ async function correr(modo) {
     const clientes = modelo.traerClientesJson();
  
     try {
-        await procesarCliente("CRE", 2020); 
+        await procesarCliente("CRE");
         
         //servicio.getLotes();
         //for (let i = 0; i < clientes.length; i++) {
@@ -25,7 +26,6 @@ async function correr(modo) {
         console.log("No se ejecuto correctamente " + e);
         
     }
-    //Esto se ejecuta antes de que haga el await del try y si tengo process.exit no funciona
     console.log("Finalizo en app.js");
     //process.exit(1)
 }

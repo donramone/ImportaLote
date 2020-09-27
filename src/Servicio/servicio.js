@@ -1,15 +1,24 @@
 /* eslint-disable max-len */
 const modeloLote = require('../Modelo/lote.js');
 const modeloFardo = require('../Modelo/fardo.js');
-// const api = require('../Api/api.js');
+const api = require('../Api/api.js');
+
 
 async function vaciarTablas() {
   // await modelo.vaciarLotes();
   // await modelo.vaciarFardos();
 }
 
-async function getLotesAPI(cliente, anio) {
-  // const lotes = 
+async function getLotesAPI(cliente) {
+  const lotes = await api.getLotesByCliente(cliente);
+  await getFardosAPI(lotes);
+  //return lotes;
+}
+
+async function getFardosAPI(lotes) {
+  const fardos = await api.getFardosByLotes(lotes);
+  console.log(fardos);
+  return fardos;
 }
 
 async function guardarLotes(lotes) {
@@ -43,6 +52,4 @@ function insertFardo(fardos) {
   });
 }
 
-module.exports = {
-  vaciarTablas, guardarLotes, guardarFardos, getLotes: getLotesAPI, insertFardo,
-};
+module.exports = { getLotesAPI };
