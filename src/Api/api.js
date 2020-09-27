@@ -1,95 +1,93 @@
+/* eslint-disable no-console */
 const axios = require('axios');
-const servicio = require('../Servicio/servicio.js');
-const lote = require('../Mapeadores/loteMapper');
-const fardo = require('../Mapeadores/fardoMapper');
-const test = require('../Mapeadores/testMapper');
-//const APIKEY = process.env.APIKEY;
-APIKEY = "3YEU2OTMAQ"
-// NO me funciono bien el process.env asi que por ahora no me meto con eso, tambien desp quitare pasar como parametro el año.
+// const servicio = require('../Servicio/servicio.js');
+const Lote = require('../Mapeadores/loteMapper');
+const Fardo = require('../Mapeadores/fardoMapper');
 
+// const APIKEY = process.env.APIKEY;
 
-async function obtenerLotesPorClienteAPI(codigoCliente, año) {
-    console.log("lotes clientes " + codigoCliente)
-    const limiteLote = 50;
-    let skip = 0;
-    const END_POINT = 'https://gestionstock.southmsnet.com.ar/extranet/GetLotesByCliente';
-    try {
-        const { data } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteLote, "Skip": "0" });
-        const totales = data.TotalLotes;
-        for (let i = 0; i < totales; i = i + 50) {
-            const { data: dataConSkip } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteLote, "Skip": skip });
-            skip = skip + limiteLote;
+const APIKEY = '3YEU2OTMAQ';
+// NO me funciono bien el process.env asi que por ahora no me meto con eso.
 
-            //Trancado aca: EN DEVOLVER EL JSON UNA VEZ QUE TENGA TODOS LOS "dataConSkip"
-            await servicio.guardarLotes(dataConSkip);
-            await obtenerFardosPorLoteAPI(dataConSkip);
-            console.log(dataConSkip)
-        }
-    } catch (ex) {
-        console.log(ex);
+async function getLotesByCliente(codigoCliente, año) {
+  const END_POINT = 'https://gestionstock.southmsnet.com.ar/extranet/GetLotesByCliente';
+  const limiteLote = 50;
+  let skip = 0;
+  const listaLotes = [];
+  try {
+    const { data: lotes } = await axios.post(END_POINT, {
+      key: APIKEY, CodigoCliente: codigoCliente, Año: año, Take: limiteLote, Skip: '0',
+    });
+    const totales = lotes.TotalLotes;
+
+    for (let i = 0; i < totales; i += 50) {
+      const { data } = await axios.post(END_POINT, {
+        key: APIKEY, CodigoCliente: codigoCliente, Año: año, Take: limiteLote, Skip: skip, 
+      });
+      /* p.push(axios.post(END_POINT, {
+        key: APIKEY, CodigoCliente: codigoCliente, Año: año, Take: limiteLote, Skip: skip,
+       })); */
+      skip += limiteLote;
+      data.LoteDetails.forEach((detallesLote) => {
+        const newLote = new Lote({ detallesLote, cliente: data.CodigoCliente });
+        listaLotes.push(newLote);
+      });
     }
-    //Aca me gustaria devolver todosLosLotes
+  } catch (ex) {
+    console.log(ex);
+  }
+  return listaLotes;
 }
 
 async function obtenerFardosPorLoteAPI(lotes) {
-    const limiteFardo = "100";
-    const año = "2020";
-    const END_POINT = ' https://gestionstock.southmsnet.com.ar/extranet/GetFardosByLote';
-    lotes.LoteDetails.map(async (lote) => {
-        try {
-            const { data } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": lotes.CodigoCliente, "Año": año, "Take": limiteFardo, "Skip": "0", "NroLote": lote['NroLote'] });
-            // me gustaria hacer un return de los fardos y no llamar en esta funcion a guardarFardos
-            await servicio.guardarFardos(data);
-        } catch (ex) {
-            console.log(ex);
-        }
-    });
-}
-
-// Las funciones en ingles son con las que pruebo para desacoplar las anteriores.
-async function getLotesByCliente(codigoCliente, año) {
-    const END_POINT = 'https://gestionstock.southmsnet.com.ar/extranet/GetLotesByCliente';
-    const limiteLote = 50;
-    let skip = 0;
-    let listaLotes = [];
+  console.log();
+  const limiteFardo = '100';
+  const año = '2020';
+  const END_POINT = ' https://gestionstock.southmsnet.com.ar/extranet/GetFardosByLote';
+  lotes.map(async (lote) => {
     try {
-        const { data : lotes } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteLote, "Skip": "0" });
-        const totales = lotes.TotalLotes;
-        for (let i = 0; i < totales; i = i + 50) {
-            const { data} = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": codigoCliente, "Año": año, "Take": limiteLote, "Skip": skip });
-            skip = skip + limiteLote;
-            data.LoteDetails.map((detallesLote) => {
-                // aca no se si esta bien pasar asi, como segundo parametro el codigo del cliente
-                const newLote = new lote({detallesLote,cliente: data['CodigoCliente']});
-                listaLotes.push(newLote);
-            });
-        }
+      const { data } = await axios.post(END_POINT, { key: APIKEY, CodigoCliente: lote.cliente, Año: año, Take: limiteFardo, Skip: '0', NroLote: lote.nroLote });
+      // me gustaria hacer un return de los fardos y no llamar en esta funcion a guardarFardos
+      // await servicio.guardarFardos(data);
+      console.log(data);
     } catch (ex) {
-        console.log(ex);
+      console.log(ex);
     }
-    return listaLotes;
+  });
 }
 
-async function getFardosByLote(lotes) {
-    //console.log(lotes)
-    const limiteFardo = "100";
-    const año = "2020";
-    let listaFardo = [];
-    const END_POINT = ' https://gestionstock.southmsnet.com.ar/extranet/GetFardosByLote';
-    try {
-        lotes.map(async (lote) => {
-            const { data } = await axios.post(END_POINT, { "key": APIKEY, "CodigoCliente": lote.cliente, "Año": año, "Take": limiteFardo, "Skip": "0", "NroLote": lote.nroLote });
-            data.Fardos.map((item) => {
-                //Nuevamente agrego parametros, porque no pude parsear solo el parametro data con el mapper
-                const newFardo = new fardo({item,Cliente: data['CodigoCliente'],NroLote: data['NroLote']});       
-                listaFardo.push(newFardo);
-            });
-        });
-    } catch (ex) {
-        console.log(ex);
-    }
-    console.log(listaFardo);
-    return listaFardo;
+/* async function getFardosByNroLote(lotes) {
+  const fardos = [];
+  for (let i = 0; i < lotes.length; i++) {
+    fardos.push(await getFardosDetailsByNroLote(lotes[i].cliente, lotes[i].nroLote));
+  }
+  return fardos;
+} */
+
+async function getFardosDetailsByNroLote(cliente, nroLote) {
+  const limite = '100';
+  const año = '2020';
+  const END_POINT = ' https://gestionstock.southmsnet.com.ar/extranet/GetFardosByLote';
+  const { data } = await axios.post(END_POINT, {
+    key: APIKEY, CodigoCliente: cliente, Año: año, Take: limite, Skip: '0', NroLote: nroLote,
+  });
+  //console.log(data)
+  return data.Fardos.map((item) => {
+    // console.log('dataaaa', item, data.CodigoCliente, data.NroLote);
+    return new Fardo({ item, Cliente: data.CodigoCliente, NroLote: data.NroLote });
+  });
 }
 
-module.exports = { obtenerLotesPorClienteAPI, obtenerFardosPorLoteAPI, getLotesByCliente, getFardosByLote };
+async function getFardosByLotes(lotes) {
+  const fardos = [];
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < lotes.length; i++) {
+    fardos.push(await getFardosDetailsByNroLote(lotes[i].cliente, lotes[i].nroLote));
+  }
+  return fardos;
+
+  // fardos.push(await getFardosDetailsByNroLote('cre', '1557'));
+  // fardos.push(await getFardosDetailsByNroLote('cre', '1558'));
+  // return fardos;
+}
+module.exports = { getLotesByCliente, getFardosByLotes, obtenerFardosPorLoteAPI };

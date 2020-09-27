@@ -1,61 +1,48 @@
+/* eslint-disable max-len */
 const modeloLote = require('../Modelo/lote.js');
 const modeloFardo = require('../Modelo/fardo.js');
-//const api = require('../Api/api.js');
+// const api = require('../Api/api.js');
 
-
-async function vaciarTablas(){
-   //await modelo.vaciarLotes();
-   //await modelo.vaciarFardos();
+async function vaciarTablas() {
+  // await modelo.vaciarLotes();
+  // await modelo.vaciarFardos();
 }
 
-async function getLotes(cliente, anio){
-//Desde este modulo no me funciona el obternetLotesPorApi
-//Creo que es por que hay como una recursividad en las llamadas a modulos.
-/*     try {
-        await api.obtenerLotesPorClienteAPI(cliente, anio);
-        //Aca quisiera tener algo asi
-        const lotes = api.obtenerLotesPorClienteAPI(cliente);
-        guardarLotes(lotes);
-        const fardos = api.obtenerFardosPorLoteAPI(lotes);
-        guardarFardos(fardos);
-        
-    } catch (error) {
-        console.log("Error en getLotes" + error);
-    } */
+async function getLotesAPI(cliente, anio) {
+  // const lotes = 
 }
-
 
 async function guardarLotes(lotes) {
-    const lotesPromesas = lotes.LoteDetails.map(async (lote) => {
-        await modeloLote
-        .insertLote(lote['NroLote'], lote['Calidad'], lote['Fardos'], lote['Resistencia'], lote['Promedio'], lote['Colores'], lote['CodMicro'], lote['Longuitud'], lote['Paquetes'], lote['Micronaire'], lote['Año'], lote['Estado'], lote['CodEstado'], lotes.CodigoCliente, new Date())
-    
-    });
-    return Promise.all(lotesPromesas)
-} 
-
-
-async function guardar(lotes) {
-    
-    const lotesPromesas = lotes.map(async (lote) => {
-        console.log("Insertando lote numero ",lote['nroLote'] )
-         await modeloLote
-        .insertLote(lote['nroLote'], lote['calidad'], lote['fardos'], lote['resistencia'], lote['promedio'], lote['colores'], lote['codMicro'], lote['longitud'], lote['paquetes'], lote['micronaire'], lote['año'], lote['estado'], lote['codigoEstado'], lote['cliente'], new Date())
-        
-    });
-    return Promise.all(lotesPromesas)
+  const lotesPromesas = lotes.map(async (item) => {
+    await modeloLote
+      .insertLote(item.nroLote, item.calidad, item.fardos, item.resistencia, item.promedio, item.colores, item.codMicro, item.longitud, item.paquetes, item.micronaire, item['año'], item.estado, item.codigoEstado, item.cliente, new Date());
+    console.log(`Guardando Lote Nro: ${item.nroLote} Cliente: ${item.cliente}`);
+  });
+  return Promise.all(lotesPromesas);
 }
-async function guardarFardos(fardos) {
-    // SyntaxError: await is only valid in async function
-    // No sé si esta bien dejar los dos async.
-    const fardosPromesa = fardos.Fardos.map(async(fardo) => {
-        await modeloFardo
-            .insertFardo(fardos.CodigoCliente, fardos.NroLote, fardo['Num'], fardo['Calidad'], fardo['CodCalidad'], new Date())
-            console.log("Guardando Nro Lote: " + fardos.NroLote + " Nro Fardo: " + fardo['Num']  + " Cliente: " + fardos.CodigoCliente );
-    });
-    //No sé si esta bien devolver las promesas ya que aca termina.
-    // ¿Estas promesas me sirven para manejar una excepción si no guardo correctamente? 
-    return Promise.all(fardosPromesa);
-} 
 
-module.exports = {vaciarTablas,guardarLotes,guardarFardos,getLotes,guardar};
+async function guardarFardos(fardos) {
+  fardos.forEach((fardo) => {
+    const fardosPromesa = fardo.map(async (item) => {
+      await modeloFardo
+        .insertFardo(item.codCliente, item.nroLote, item.nroFardo, item.calidad, item.codCalidad, new Date());
+      console.log(`Guardando Fardo Nro Lote: ${item.nroFardo} del lote Nro: ${item.nroLote} Cliente: ${item.codCliente}`);
+    });
+    return Promise.all(fardosPromesa);
+  });
+}
+
+function insertFardo(fardos) {
+  // Con el forEach no puedo usar el await en modeloFardo, funciona pero me indica que el programa
+  // termino mientras sigue insertando records, con el map de guardarFardos no me sucede.
+  fardos.forEach((fardo) => {
+    fardo.forEach((item) => {
+      modeloFardo.insertFardo(item.codCliente, item.nroLote, item.nroFardo, item.calidad, item.codCalidad, new Date());
+      console.log(`Insert Nro Lote: ${item.nroLote} Nro Fardo: ${item.nroFardo} Cliente: ${item.codCliente}`);
+    });
+  });
+}
+
+module.exports = {
+  vaciarTablas, guardarLotes, guardarFardos, getLotes: getLotesAPI, insertFardo,
+};
