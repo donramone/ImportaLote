@@ -3,7 +3,7 @@ const modeloLote = require('../Modelo/lote.js');
 const modeloFardo = require('../Modelo/fardo.js');
 const api = require('../Api/api.js');
 
-async function vaciarTablas() {
+async function clearTables() {
   await modeloLote.vaciarLotes();
   await modeloFardo.vaciarFardos();
 }
@@ -35,4 +35,4 @@ async function requestAPI(cliente) {
   await saveFardos(fardos);
 }
 
-module.exports = { requestAPI };
+module.exports = { requestAPI, clearTables };

@@ -10,6 +10,7 @@ async function correr(modo) {
   }
   const clientes = procesarCliente.getClientJson();
   try {
+    await servicio.clearTables();
     for (let i = 0; i < clientes.length; i += 1) {
       await servicio.requestAPI(clientes[i].codigoCliente);
     }
