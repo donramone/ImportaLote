@@ -1,33 +1,23 @@
-//require('dotenv').config();
+// require('dotenv').config();
 const procesarCliente = require('./procesarCliente');
-const {vaciarTablas} = require('./Servicio/servicio');
-const modelo = require('./Modelo/cliente.js');
+const servicio = require('./Servicio/servicio');
 
 async function correr(modo) {
-    // await vaciarTablas();
-
-    // if(modo === 'Prueba'){
-    //     await procesarCliente(process.env.CODIGO_CLIENTE_PRUEBA, 2020); //si el año tiene que ser el actual usá el método Date()
-    //     console.log("Finalizo la ejecucion del programa con el primer cliente");
-    //     process.exit(0);
-    // }
-
-    const clientes = modelo.traerClientesJson();
- 
-    try {
-        await procesarCliente("CRE");
-        
-        //servicio.getLotes();
-        //for (let i = 0; i < clientes.length; i++) {
-            //console.log(clientes[i].codigoCliente);
-            //await procesarCliente(clientes[i].codigoCliente, 2020); //si el año tiene que ser el actual usá el método Date()
-        //}
-    } catch (e) {
-        console.log("No se ejecuto correctamente " + e);
-        
+  if (modo === 'Prueba') {
+    await procesarCliente(process.env.CODIGO_CLIENTE_PRUEBA);
+    console.log('Finalizo la ejecucion del programa con el primer cliente');
+    process.exit(0);
+  }
+  const clientes = procesarCliente.getClientJson();
+  try {
+    for (let i = 0; i < clientes.length; i += 1) {
+      await servicio.requestAPI(clientes[i].codigoCliente);
     }
-    console.log("Finalizo en app.js");
-    //process.exit(1)
+  } catch (e) {
+    console.log('No se ejecuto correctamente ' + e);
+  }
+  console.log('Finalizo en app.js');
+  process.exit(0);
 }
 correr();
-//correr(process.env.MODO);
+// correr(process.env.MODO);

@@ -1,10 +1,17 @@
-const servicio = require('./Servicio/servicio');
+const fs = require('fs');
 
-async function procesarCliente(cliente) {
+function getClientJson() {
+  let clientes = [];
   try {
-    await servicio.getLotesAPI(cliente);
-  } catch (e) {
-    console.log(e);
+    clientes = JSON.parse(fs.readFileSync('Data/clientes.json'));
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      console.log('No se encontró el archivo clientes.json!');
+    } else {
+      throw err;
+    }
   }
+  return clientes;
 }
-module.exports = procesarCliente;
+
+module.exports = { getClientJson };

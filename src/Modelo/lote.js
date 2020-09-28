@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const conexion = require('../Data/config');
 
 module.exports = {
@@ -11,6 +12,15 @@ module.exports = {
         if (err) reject(err);
         else resolve(resultados.insertId);
       });
+    });
+  },
+  vaciarLotes() {
+    return new Promise((resolve, reject) => {
+      conexion.query('TRUNCATE TABLE Lotes_tmp',
+        (err, resultados) => {
+          if (err) reject(err);
+          else resolve(resultados[0]);
+        });
     });
   },
 };
