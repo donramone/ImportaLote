@@ -21,6 +21,28 @@ async function getLotesByCliente(codigoCliente) {
       key: APIKEY, CodigoCliente: codigoCliente, Año: anio, Take: limiteLote, Skip: '0',
     });
     const totales = lotes.TotalLotes;
+    for (let i = 0; i < totales; i += 50) {
+      const { data } = await axios.post(END_POINT_LOTES, {
+        key: APIKEY, CodigoCliente: codigoCliente, Año: anio, Take: limiteLote, Skip: skip, 
+      });
+      skip += limiteLote;
+      listaLotes.push(data);
+    }
+  } catch (ex) {
+    console.log(ex);
+  }
+  return listaLotes;
+}
+
+/* async function getLotesByCliente(codigoCliente) {
+  const limiteLote = 50;
+  let skip = 0;
+  const listaLotes = [];
+  try {
+    const { data: lotes } = await axios.post(END_POINT_LOTES, {
+      key: APIKEY, CodigoCliente: codigoCliente, Año: anio, Take: limiteLote, Skip: '0',
+    });
+    const totales = lotes.TotalLotes;
 
     for (let i = 0; i < totales; i += 50) {
       const { data } = await axios.post(END_POINT_LOTES, {
@@ -36,7 +58,7 @@ async function getLotesByCliente(codigoCliente) {
     console.log(ex);
   }
   return listaLotes;
-}
+} */
 /*
 async function getAllLotes(codigoCliente) {
   const MAX_LOTE = 50;
@@ -59,13 +81,12 @@ async function getFardosDetailsByNroLote(cliente, nroLote) {
   const { data } = await axios.post(END_POINT_FARDOS, {
     key: APIKEY, CodigoCliente: cliente, Año: anio, Take: limite, Skip: '0', NroLote: nroLote,
   });
-  return data.Fardos.map((item) => {
-    return new Fardo({ item, Cliente: data.CodigoCliente, NroLote: data.NroLote });
-  });
+  const fardoPromesa = data.Fardos.map((item) => new Fardo({ item, Cliente: data.CodigoCliente, NroLote: data.NroLote }));
+  return Promise.all(fardoPromesa);
 }
 
 async function getFardosByLotes(lotes) {
-  const fardos = [];
+  let fardos = [];
   for (let i = 0; i < lotes.length; i += 1) {
     fardos.push(await getFardosDetailsByNroLote(lotes[i].cliente, lotes[i].nroLote));
   }

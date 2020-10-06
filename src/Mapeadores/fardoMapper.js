@@ -2,7 +2,7 @@ const Fardo = require('../Entidades/fardo');
 
 module.exports = function mapearFardoApi(datosApi) {
   const {
-    Cliente: codCliente,
+    Cliente: codigoCliente,
     NroLote: nroLote,
   } = datosApi;
   const {
@@ -12,7 +12,7 @@ module.exports = function mapearFardoApi(datosApi) {
   } = datosApi.item;
 
   return new Fardo({
-    codCliente,
+    codigoCliente,
     nroLote,
     nroFardo,
     calidad,

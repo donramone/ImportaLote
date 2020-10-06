@@ -13,7 +13,7 @@ module.exports = class Lote {
     año,
     estado,
     codigoEstado,
-    cliente,
+    codigoCliente,
   }) {
     this.nroLote = nroLote;
     this.calidad = calidad;
@@ -28,6 +28,6 @@ module.exports = class Lote {
     this.año = año;
     this.estado = estado;
     this.codigoEstado = codigoEstado;
-    this.cliente = cliente;
+    this.codigoCliente = codigoCliente;
   }
 };

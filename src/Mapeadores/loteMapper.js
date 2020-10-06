@@ -2,8 +2,7 @@ const Lote = require('../Entidades/lote');
 
 // No entiendo si debo usar el nombre de esta funcion mapearLoteApi ya que estoy usando Lote no mas
 module.exports = function mapearLoteApi(datosApi) {
-  // Aca no se si esta correcto como lo arme:
-  const { cliente } = datosApi;
+  const codigoCliente = datosApi.cliente;
   const {
     NroLote: nroLote,
     Calidad: calidad,
@@ -18,7 +17,7 @@ module.exports = function mapearLoteApi(datosApi) {
     Año: año,
     Estado: estado,
     CodEstado: codigoEstado,
-  } = datosApi.detallesLote;
+  } = datosApi.detalleLote;
 
   return new Lote({
     nroLote,
@@ -34,6 +33,6 @@ module.exports = function mapearLoteApi(datosApi) {
     año,
     estado,
     codigoEstado,
-    cliente,
+    codigoCliente,
   });
 };

@@ -2,7 +2,7 @@
 const conexion = require('../Data/config');
 
 module.exports = {
-  insertLote(nombre, calidad, fardos, resistencia, promedio, colores, codMicro, longitud, paquetes, micronaire, año, estado, codEstado, codCliente, fechaCreacion) {
+  insertLoteOld(nombre, calidad, fardos, resistencia, promedio, colores, codMicro, longitud, paquetes, micronaire, año, estado, codEstado, codCliente, fechaCreacion) {
     return new Promise((resolve, reject) => {
       conexion.query(`insert into Lotes_tmp
             (nroLote, Calidad,Fardos,Resistencia,Promedio,Colores,CodMicro,Longitud,Paquetes,Micronaire,Año,Estado,CodEstado,CodCliente,FechaCreacion)
@@ -11,6 +11,19 @@ module.exports = {
       [nombre, calidad, fardos, resistencia, promedio, colores, codMicro, longitud, paquetes, micronaire, año, estado, codEstado, codCliente, fechaCreacion], (err, resultados) => {
         if (err) reject(err);
         else resolve(resultados.insertId);
+      });
+    });
+  },
+  insertLote(lote) {
+    return new Promise((resolve, reject) => {
+      conexion.query('INSERT INTO Lotes_tmp SET ?', lote, (err, resultados) => {
+        if (err) {
+          reject(err);
+          // console.log(err);
+        } else {
+          console.log(`Insert Lote in ${resultados.insertId} cliente ${lote.codigoCliente} lote${lote.nroLote} `);
+          resolve("OK ", resultados.insertId);
+        }
       });
     });
   },

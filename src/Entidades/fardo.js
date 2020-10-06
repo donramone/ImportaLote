@@ -1,12 +1,12 @@
 module.exports = class Fardo {
   constructor({
-    codCliente,
+    codigoCliente,
     nroLote,
     nroFardo,
     calidad,
     codCalidad,
   }) {
-    this.codCliente = codCliente;
+    this.codigoCliente = codigoCliente;
     this.nroLote = nroLote;
     this.nroFardo = nroFardo;
     this.calidad = calidad;
