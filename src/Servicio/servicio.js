@@ -1,6 +1,7 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable max-len */
-// import mapearLoteApi from '../Mapeadores/loteMapper';
 const mapearLoteApi = require('../Mapeadores/loteMapper');
+const mapearFardoApi = require('../Mapeadores/fardoMapper');
 const modeloLote = require('../Modelo/lote.js');
 const modeloFardo = require('../Modelo/fardo.js');
 const api = require('../Api/api.js');
@@ -10,81 +11,74 @@ async function clearTables() {
   await modeloFardo.vaciarFardos();
 }
 
-/* async function saveLotesOld(lotes) {
-  const lotesPromesas = lotes.map(async (item) => {
+async function saveLotes(lotes) {
+  const lotePromesa = lotes.map(async (itemLote) => {
     await modeloLote
-      .insertLoteOld(item.nroLote, item.calidad, item.fardos, item.resistencia, item.promedio, item.colores, item.codMicro, item.longitud, item.paquetes, item.micronaire, item['año'], item.estado, item.codigoEstado, item.cliente, new Date());
-    console.log(`Guardando Lote Nro: ${item.nroLote} Cliente: ${item.cliente}`);
-  });
-  return Promise.all(lotesPromesas);
-} */
-
-async function saveLote(lote) {
-  const lotePromesa = lote.LoteDetails.map(async (detalleLote) => {
-    await modeloLote
-      .insertLote(mapearLoteApi({ detalleLote, cliente: lote.CodigoCliente }));
+      .insertLote(itemLote);
   });
   return Promise.all(lotePromesa);
 }
 
 async function saveFardos(fardos) {
-  // fardos.forEach(async (fardosEnLote) => {
   const fardosPromesa = fardos.map(async (itemFardo) => {
-    // console.log("Recorriendo el fardo " + itemFardo.nroFardo);
     await modeloFardo
-    // .insertFardo(itemFardo.codigoCliente, itemFardo.nroLote, itemFardo.nroFardo, itemFardo.calidad, itemFardo.codCalidad, new Date());
       .insertFardoNew(itemFardo);
   });
   return Promise.all(fardosPromesa);
-  // });
-  // fardos.Fardo.forEach((itemFardo) => {
-  // totalFardo = totalFardo + 1;
-  /* itemFardo.forEach(async (fardo) => {
-  // itemFardo.map(async (fardo) => {
-  console.log(fardo);
-  }); */
-  /*  prome = await modeloFardo
-        .insertFardoNew(fardo);
-    }); */
-  // });
-  /* const fardosPromesa = fardos.map(async (itemFardo) => {
-    await modeloFardo
-      .insertFardoNew(itemFardo);
-  }); */
-  // return Promise.all(promesa);
 }
 
+function transformarJsonLotes(lotesApi) {
+  const listaLotes = [];
+  for (let i = 0; i < lotesApi.length; i += 1) {
+    listaLotes.push(lotesApi[i].LoteDetails.map((lote) => mapearLoteApi({ lote, Cliente: lotesApi[i].CodigoCliente })));
+  }
+  return (listaLotes);
+}
+
+function transformarJsonFardos(fardosApi) {
+  const listaFardos = [];
+  for (let i = 0; i < fardosApi.length; i += 1) {
+    listaFardos.push(fardosApi[i].Fardos.map((fardo) => mapearFardoApi({ fardo, Cliente: fardosApi[i].CodigoCliente, NroLote: fardosApi[i].NroLote })));
+  }
+  return (listaFardos);
+}
+
+function getNroLote(listaLotes) {
+  // ESTA FUNCION ME PARECE INNECESARIA:
+  // LA SEPARE PARA LIMPIAR UN POCO MIS BUCLES PERO ESPERO PODER OBTENER LOS NRO SIN TANTOS FOREACH
+  const listaNroLotes = [];
+  listaLotes.forEach((lotes) => {
+    lotes.forEach((itemLote) => {
+      listaNroLotes.push(itemLote.nroLote);
+    });
+  });
+  return listaNroLotes;
+}
 async function requestAPI(cliente) {
-  const lotes = await api.getLotesByCliente(cliente);
-  for (lote of lotes) {
-    await saveLote(lote);
+  // Uso for of porque me dio problemas el foreach y veo que usan eso
+  // de todos modos quiero quitar esos for creo que lo puedo hacer si armo bien mi listaLotes
+  const fardosApi = [];
+  const lotesApi = await api.getLotesByCliente(cliente);
+  const listaLotes = transformarJsonLotes(lotesApi);
+  for (const lotes of listaLotes) {
+    await saveLotes(lotes);
+  }
+  const listaNroLotes = getNroLote(listaLotes);
+  for (const nroLote of listaNroLotes) {
+    fardosApi.push(await api.getFardosDetailsByNroLote(cliente, nroLote));
+  }
+  const listaFardos = transformarJsonFardos(fardosApi);
+  for (const fardos of listaFardos) {
+    await saveFardos(fardos);
   }
 
-  /* itemLote.LoteDetails.map(async (item) => {
-      console.log("Voy a guardar: ", item.NroLote);
-      saveLote(mapearLoteApi(item));
-    }); */
-  // });
-  /* ssss
-  lotes.forEach((lote) => {vv
-    console.log(lote);
-    const newLote = new mapearLoteApi(lote);
-    // const newLote = new mapearLoteApi({ lote, cliente: lotes.CodigoCliente });
-    console.log(newLote);
-  }); */
-
-  /* lotes.LoteDetails.forEach((detallesLote) => {
-    const newLote = new mapearLoteApi({ detallesLote, cliente: lotes.CodigoCliente });
-    console.log(newLote);
-  }); */
-  // await saveLotes(lotes);
-  // const fardos = await api.getFardosByLotes(lotes);
-  // const prome = fardos.map(async (fardo) => {
-  // console.log(fardos);
-  //   await saveFardos(fardo);
-  // });
-  // console.log(fardos);
-  // return Promise.all(prome);
+  /* EL "await inside a loop" estaria mal? lo debeia tratar asi:??
+  const promesaSaveFardos = [];
+  for (const fardos of listaFardos) {
+    promesaSaveFardos.push(saveFardos(fardos));
+  }
+  const responseSaveFardos = await Promise.all(promesaSaveFardos);
+  */
 }
 
 module.exports = { requestAPI, clearTables };

@@ -19,10 +19,9 @@ module.exports = {
       conexion.query('INSERT INTO Lotes_tmp SET ?', lote, (err, resultados) => {
         if (err) {
           reject(err);
-          // console.log(err);
         } else {
-          console.log(`Insert Lote in ${resultados.insertId} cliente ${lote.codigoCliente} lote${lote.nroLote} `);
-          resolve("OK ", resultados.insertId);
+          console.log(`Insert Lote ID: ${resultados.insertId} Cliente: ${lote.codigoCliente} NroLote: ${lote.nroLote} `);
+          resolve('OK ', resultados.insertId);
         }
       });
     });

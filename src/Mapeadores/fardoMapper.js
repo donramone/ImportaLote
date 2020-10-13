@@ -9,7 +9,7 @@ module.exports = function mapearFardoApi(datosApi) {
     Num: nroFardo,
     Calidad: calidad,
     CodCalidad: codCalidad,
-  } = datosApi.item;
+  } = datosApi.fardo;
 
   return new Fardo({
     codigoCliente,

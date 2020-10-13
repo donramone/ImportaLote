@@ -8,7 +8,6 @@ module.exports = {
             VALUES
             (?,?,?,?,?,?)`,
       [CodigoCliente, NroLote, Nrofardo, Calidad, CodCalidad, fechaCreacion], (err, resultados) => {
-        console.log("Estoy en PROMESA", CodigoCliente);
         if (err) {
           reject(err);
         } else {
@@ -19,7 +18,6 @@ module.exports = {
   },
   insertFardoNew(fardo) {
     return new Promise((resolve, reject) => {
-      console.log(fardo);
       conexion.query('INSERT INTO Fardos_tmp Set ?', fardo, (err, resultados) => {
         if (err) {
           console.log(err);
