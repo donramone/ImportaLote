@@ -25,8 +25,6 @@ module.exports = {
     obtenerFechaCiclo() {
         // Formato: año anterior 4 digitos / año actual 2 digitos: ejemplo --> 2019/20
         const year = new Date();
-        //console.log(year.getFullYear() - 1 + "/" + (year.getFullYear().toString().substr(-2)));
         return (year.getFullYear() - 1 + "/" + (year.getFullYear().toString().substr(-2)));
-        //return "2015/16"
       }
 }
