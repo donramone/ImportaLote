@@ -1,7 +1,7 @@
 
 const modelo = require('./src/Modelo/modelo');
 const axios = require('axios');
-const APIKEY = "3YEU2OTMAQ";
+const APIKEY = "";
 
 function guardarLotes(lotes) {
      const lotesPromesas = lotes.LoteDetails.map((lote) => {
